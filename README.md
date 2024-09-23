@@ -2,10 +2,6 @@
 
 Run Babel during any Vite command, also during serve.
 
-## Motivations
-
-Most Vite plugins runs Babel only during `build`, not `serve`, and only other possible way to do this is via [@vitejs/plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react). ESBuild is awesome tool, but doesn't support some experimental features, like decorators ([issue #2349](https://github.com/vitejs/vite/issues/2349)) or class instance fields, out of box. You can use them in TypeScript, but not pure JS. This plugin was made to enable usage of such features and runs babel during `optimizeDeps`, `dev` and `build` stages, but it can be configured.
-
 ## Installation
 
 ```bash
@@ -45,8 +41,9 @@ By default, babel is run for JS/JSX files. You can change that vie `filter` opti
 |---|---|---|---|
 | `apply` | `serve` or `build` | `undefined` | Limits plugin usage to only build or only serve. If not specified, will be run during both cycles. |
 | `babelConfig` | `object` | `{}` | [Babel Transform Options](https://babeljs.io/docs/en/options) |
-| `filter` | `RegExp` | `/\.jsx?$/` | Which files is babel applied to. By default, it's js/jsx files. |
+| `filter` | `RegExp` | `*` | Which files is babel applied to. By default, it's js/jsx files. |
 | `loader` | `Loader` or `(path: string) => Loader` | `undefined` | This tells esbuild how to interpret the contents after babel's transformation. For example, the js loader interprets the contents as JavaScript and the css loader interprets the contents as CSS. The loader defaults to js if it's not specified. See the [Content Types](https://esbuild.github.io/content-types) page for a complete list of all built-in loaders. |
+| `enforce` | `pre` or `post` | `pre` | When to run the plugin. `pre` means it will run before other plugins, `post` means it will run after other plugins. see [Plugin Ordering](https://vitejs.dev/guide/api-plugin.html#plugin-ordering) for more details. |
 
 ## Tips
 
@@ -63,35 +60,6 @@ babel({
 ```
 
 or just use `.babelrc.json`.
-
-__NOTE:__ Any babel plugins and presets need to be installed seperately and are not included with this package.
-
-## Troubleshooting
-
-#### [ERROR] The JSX syntax extension is not currently enabled
-
-This usually happens when you're using this plugin to only transform part of a `.jsx` file (such as decorators), and leaving the JSX syntax untouched. By default, esbuild interprets contents as `.js`, so you'll need to specify the loader esbuild should use.
-
-Example:
-
-```js
-import { extname } from 'path';
-// ...
-babel({
-    babelConfig: {
-        babelrc: false,
-        configFile: false,
-        plugins: ['@babel/plugin-proposal-decorators'],
-        
-        // uses the jsx loader for .jsx files
-        loader: path => {
-          if (extname(path) === '.jsx') {
-            return 'jsx';
-          }
-        },
-    }
-})
-```
 
 ## License
 

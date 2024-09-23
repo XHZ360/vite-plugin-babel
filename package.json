@@ -17,7 +17,7 @@
     "/dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "node ./scripts/clean.js",
     "dev": "rollup -c rollup.config.ts --watch --configPlugin typescript",
     "build": "rollup -c rollup.config.ts --configPlugin typescript",
     "prepare": "npm run clean && npm run build"
